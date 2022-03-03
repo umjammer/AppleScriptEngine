@@ -2,8 +2,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>apple</groupId>
-  <artifactId>AppleScriptEngine</artifactId>
+  <artifactId>apple-script-engine</artifactId>
   <version>1.1.1</version>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub umjammer Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/umjammer/apple-script-engine</url>
+    </repository>
+  </distributionManagement>
 
   <profiles>
     <profile>
@@ -58,7 +66,7 @@
               </linkerStartOptions>
               <linkerFinalName></linkerFinalName>
               <linkerEndOptions>
-                <linkerEndOption>-o ${project.build.directory}/libAppleScriptEngine.dylib</linkerEndOption>
+                <linkerEndOption>-o ${project.build.directory}/lib${project.artifactId}.dylib</linkerEndOption>
               </linkerEndOptions>
             </configuration>
             <executions>
@@ -86,9 +94,9 @@
                 <configuration>
                   <groupId>${project.groupId}</groupId>
                   <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.parent.version}</version>
+                  <version>${project.version}</version>
                   <packaging>dylib</packaging>
-                  <file>${project.build.directory}/libAppleScriptEngine.dylib</file>
+                  <file>${project.build.directory}/lib${project.artifactId}.dylib</file>
                 </configuration>
               </execution>
             </executions>
@@ -112,12 +120,12 @@
                     <argument>deploy:deploy-file</argument>
                     <argument>-DgroupId=${project.groupId}</argument>
                     <argument>-DartifactId=${project.artifactId}</argument>
-                    <argument>-Dversion=${project.parent.version}</argument>
+                    <argument>-Dversion=${project.version}</argument>
                     <argument>-Dpackaging=dylib</argument>
-                    <argument>-Dfile=${project.build.directory}/libAppleScriptEngine.dylib</argument>
+                    <argument>-Dfile=${project.build.directory}/lib${project.artifactId}.dylib</argument>
                     <argument>-DgeneratePom=false</argument>
                     <argument>-DrepositoryId=github</argument>
-                    <argument>-Durl=https://maven.pkg.github.com/umjammer/vavi-script-applescript</argument>
+                    <argument>-Durl=https://maven.pkg.github.com/umjammer/apple-script-engine </argument>
                     <argument>-DgeneratePom=false</argument>
                     <argument>-s</argument>
                     <argument>${env.GITHUB_WORKSPACE}/settings.xml</argument>
