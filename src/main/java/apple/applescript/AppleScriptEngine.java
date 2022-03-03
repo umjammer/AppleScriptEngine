@@ -25,12 +25,22 @@
 
 package apple.applescript;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
+import javax.script.SimpleScriptContext;
 
 /**
  * AppleScriptEngine implements JSR 223 for AppleScript on Mac OS X
@@ -380,7 +390,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return a pointer to an NSDictionary
      */
     private long scriptContextToNSDictionary(final ScriptContext context) throws ScriptException {
-        final Map<String, Object> contextAsMap = new HashMap<String, Object>();
+        final Map<String, Object> contextAsMap = new HashMap<>();
         for (final Entry<String, Object> e : context.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
             contextAsMap.put(e.getKey().replaceAll("\\.", "_"), e.getValue());
         }

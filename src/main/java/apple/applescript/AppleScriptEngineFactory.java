@@ -25,9 +25,14 @@
 
 package apple.applescript;
 
-import java.security.*;
-import java.util.*;
-import javax.script.*;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 
 public class AppleScriptEngineFactory implements ScriptEngineFactory {
     private static native void initNative();
