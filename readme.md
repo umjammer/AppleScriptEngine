@@ -2,7 +2,7 @@
 [![Java CI with Maven](https://github.com/umjammer/AppleScriptEngine/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/umjammer/AppleScriptEngine/actions)
 
 
-# AppleScriptEngine
+# apple-script-engine
 
 jsr223 for apple script. mac jdk stopped including the apple script engine after version 6.
 
@@ -23,7 +23,7 @@ Note: this is a fork of https://github.com/mik3hall/AppleScriptEngine
 ```xml
     <dependency>
      <groupId>apple</groupId>
-     <artifactId>AppleScriptEngine</artifactId>
+     <artifactId>apple-script-engine</artifactId>
       <version>1.1.1</version>
     </dependency>
 ```

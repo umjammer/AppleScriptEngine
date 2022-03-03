@@ -66,7 +66,7 @@
               </linkerStartOptions>
               <linkerFinalName></linkerFinalName>
               <linkerEndOptions>
-                <linkerEndOption>-o ${project.build.directory}/lib${project.artifactId}.dylib</linkerEndOption>
+                <linkerEndOption>-o ${project.build.directory}/libAppleScriptEngine.dylib</linkerEndOption>
               </linkerEndOptions>
             </configuration>
             <executions>
@@ -96,7 +96,7 @@
                   <artifactId>${project.artifactId}</artifactId>
                   <version>${project.version}</version>
                   <packaging>dylib</packaging>
-                  <file>${project.build.directory}/lib${project.artifactId}.dylib</file>
+                  <file>${project.build.directory}/libAppleScriptEngine.dylib</file>
                 </configuration>
               </execution>
             </executions>
@@ -122,7 +122,7 @@
                     <argument>-DartifactId=${project.artifactId}</argument>
                     <argument>-Dversion=${project.version}</argument>
                     <argument>-Dpackaging=dylib</argument>
-                    <argument>-Dfile=${project.build.directory}/lib${project.artifactId}.dylib</argument>
+                    <argument>-Dfile=${project.build.directory}/libAppleScriptEngine.dylib</argument>
                     <argument>-DgeneratePom=false</argument>
                     <argument>-DrepositoryId=github</argument>
                     <argument>-Durl=https://maven.pkg.github.com/umjammer/apple-script-engine </argument>
