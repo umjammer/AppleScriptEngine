@@ -1,3 +1,7 @@
+[![Maven Package](https://github.com/umjammer/AppleScriptEngine/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/umjammer/AppleScriptEngine/actions/workflows/maven-publish.yml)
+[![Java CI with Maven](https://github.com/umjammer/AppleScriptEngine/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/umjammer/AppleScriptEngine/actions)
+
+
 # AppleScriptEngine
 
 jsr223 for apple script. mac jdk stopped including the apple script engine after version 6.
@@ -20,7 +24,7 @@ Note: this is a fork of https://github.com/mik3hall/AppleScriptEngine
     <dependency>
      <groupId>apple</groupId>
      <artifactId>AppleScriptEngine</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
     </dependency>
 ```
    * dylib
