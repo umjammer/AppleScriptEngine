@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import vavi.util.Debug;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -18,8 +20,12 @@ class MpsTest {
     @Test
     void test() throws Exception {
         ScriptEngineManager factory = new ScriptEngineManager();
+
         // Create a AppleScript engine.
-        ScriptEngine engine = factory.getEngineByName("AppleScript");
+        ScriptEngine engine = factory.getEngineByName("AppleScriptEngine");
+Debug.println("engine: " + engine.getClass());
+        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("apple"));
+
         FileReader rdr = new FileReader("src/test/resources/mps.as");
         @SuppressWarnings("unchecked")
         ArrayList<ArrayList<?>> procs = (ArrayList<ArrayList<?>>) engine.eval(rdr);
