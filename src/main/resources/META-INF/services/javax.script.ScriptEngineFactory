@@ -1,1 +1,2 @@
 apple.applescript.AppleScriptEngineFactory #AppleScriptEngine
+vavix.rococoa.applescript.jsr223.AppleScriptEngineFactory
