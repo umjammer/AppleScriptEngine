@@ -166,6 +166,8 @@
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
             -Djava.library.path=${project.build.directory}
           </argLine>
+          <trimStackTrace>false</trimStackTrace>
+          <forkMode>always</forkMode>
         </configuration>
       </plugin>
     </plugins>

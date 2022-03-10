@@ -63,7 +63,7 @@ Note: this is a fork of https://github.com/mik3hall/AppleScriptEngine
 ```
 
    * rococoa
-```
+```xml
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>2.10</version>
