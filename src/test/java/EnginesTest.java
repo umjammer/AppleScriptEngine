@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import vavi.util.Debug;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -47,7 +49,10 @@ class EnginesTest {
 
         assertTrue(factories.stream().anyMatch(f -> f.getClass().equals(apple.applescript.AppleScriptEngineFactory.class)));
 
-        ScriptEngine engine = mgr.getEngineByName("AppleScript");
+        ScriptEngine engine = mgr.getEngineByName("AppleScriptEngine");
+Debug.println("engine: " + engine.getClass());
+        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("apple"));
+
         Long result = (Long) engine.eval(script);
         System.out.println("Pick a card script result: " + result);
         assertTrue(1 <= result && result <= 52);

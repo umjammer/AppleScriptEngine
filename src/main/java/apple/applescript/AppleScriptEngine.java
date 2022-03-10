@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -46,6 +47,7 @@ import javax.script.SimpleScriptContext;
  * AppleScriptEngine implements JSR 223 for AppleScript on Mac OS X
  */
 public class AppleScriptEngine implements ScriptEngine {
+    static Logger logger = Logger.getLogger(AppleScriptEngine.class.getName());
     private static native void initNative();
 
     private static native long createContextFrom(final Object object);
@@ -58,7 +60,7 @@ public class AppleScriptEngine implements ScriptEngine {
     static {
         System.loadLibrary("AppleScriptEngine");
         initNative();
-        TRACE("<static-init>");
+        logger.exiting(AppleScriptEngine.class.getName(), "<static-init>");
     }
 
     static void checkSecurity() {
@@ -66,16 +68,12 @@ public class AppleScriptEngine implements ScriptEngine {
         if (securityManager != null) securityManager.checkExec("/usr/bin/osascript");
     }
 
-    static void TRACE(final String str) {
-//        System.out.println(AppleScriptEngine.class.getName() + "." + str);
-    }
-
     /**
      * Accessor for the ScriptEngine's long name variable
      * @return the long name of the ScriptEngine
      */
     protected static String getEngine() {
-        TRACE("getEngine()");
+        logger.entering(AppleScriptEngine.class.getName(), "getEngine()");
         return AppleScriptEngineFactory.ENGINE_NAME;
     }
 
@@ -84,7 +82,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return the version of the ScriptEngine
      */
     protected static String getEngineVersion() {
-        TRACE("getEngineVersion()");
+        logger.entering(AppleScriptEngine.class.getName(), "getEngineVersion()");
         return AppleScriptEngineFactory.ENGINE_VERSION;
     }
 
@@ -93,7 +91,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return the short name of the ScriptEngine
      */
     protected static String getName() {
-        TRACE("getName()");
+        logger.entering(AppleScriptEngine.class.getName(), "getName()");
         return AppleScriptEngineFactory.ENGINE_SHORT_NAME;
     }
 
@@ -102,7 +100,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return the language the ScriptEngine supports
      */
     protected static String getLanguage() {
-        TRACE("getLanguage()");
+        logger.entering(AppleScriptEngine.class.getName(), "getLanguage()");
         return AppleScriptEngineFactory.LANGUAGE;
     }
 
@@ -112,7 +110,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @see com.apple.applescript.AppleScriptEngine#init()
      */
     public AppleScriptEngine() {
-        TRACE("<ctor>()");
+        logger.entering(AppleScriptEngine.class.getName(), "<ctor>()");
         // set our parent factory to be a new factory
         factory = AppleScriptEngineFactory.getFactory();
 
@@ -162,7 +160,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * <li><code>THREADING</code> - null -- the AppleScriptEngine does not support concurrency, you will have to implement thread-safeness yourself.</li></ul>
      */
     private void init() {
-        TRACE("init()");
+        logger.entering(AppleScriptEngine.class.getName(), "init()");
         // set up our context
 /* TODO -- name of current executable?  bad java documentation at:
  * http://java.sun.com/javase/6/docs/api/javax/script/ScriptEngine.html#FILENAME */
@@ -182,7 +180,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return the version of AppleScript running on the system
      */
     protected String getLanguageVersion() {
-        TRACE("AppleScriptEngine.getLanguageVersion()");
+        logger.entering(AppleScriptEngine.class.getName(), "AppleScriptEngine.getLanguageVersion()");
         try {
             final Object result = eval("get the version of AppleScript");
             if (result instanceof String) return (String)result;
