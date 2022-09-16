@@ -107,7 +107,7 @@ public class AppleScriptEngine implements ScriptEngine {
     /**
      * The no argument constructor sets up the object with default members,
      * a factory for the engine and a fresh context.
-     * @see com.apple.applescript.AppleScriptEngine#init()
+     * @see apple.applescript.AppleScriptEngine#init()
      */
     public AppleScriptEngine() {
         logger.entering(AppleScriptEngine.class.getName(), "<ctor>()");
@@ -135,7 +135,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * The constructor taking a factory as an argument sets the parent factory for
      * this engine to be the passed factory, and sets up the engine with a fresh context
      * @param factory
-     * @see com.apple.applescript.AppleScriptEngine#init()
+     * @see apple.applescript.AppleScriptEngine#init()
      */
     public AppleScriptEngine(final ScriptEngineFactory factory) {
         // inherit the factory passed to us
@@ -269,7 +269,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * Prefers FileReader or BufferedReader wrapping FileReader as argument.
      * @param reader a Reader to AppleScript source or compiled AppleScript
      * @return an Object corresponding to the return value of the script
-     * @see com.apple.applescript.AppleScriptEngine#eval(Reader, ScriptContext)
+     * @see apple.applescript.AppleScriptEngine#eval(Reader, ScriptContext)
      */
     public Object eval(final Reader reader) throws ScriptException {
         return eval(reader, getContext());
@@ -281,7 +281,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param reader a stream to AppleScript source or compiled AppleScript
      * @param bindings a Bindings object representing the contexts to execute inside
      * @return the return value of the script
-     * @see com.apple.applescript.AppleScriptEngine#eval(Reader, ScriptContext)
+     * @see apple.applescript.AppleScriptEngine#eval(Reader, ScriptContext)
      */
     public Object eval(final Reader reader, final Bindings bindings) throws ScriptException {
         final Bindings tmp = getContext().getBindings(ScriptContext.ENGINE_SCOPE);
@@ -295,8 +295,8 @@ public class AppleScriptEngine implements ScriptEngine {
      * Implementation required by ScriptEngine parent<br />
      * This function can execute either AppleScript source or compiled AppleScript and functions by writing the
      * contents of the Reader to a temporary file and then executing it with the engine's context.
-     * @param reader
-     * @param scriptContext
+     * @param reader a stream to AppleScript source or compiled AppleScript
+     * @param context the context to execute the script under
      * @return an Object corresponding to the return value of the script
      */
     public Object eval(final Reader reader, final ScriptContext context) throws ScriptException {
@@ -341,7 +341,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * Evaluate an AppleScript script passed as a source string. Using the engine's built in context.
      * @param script the string to execute.
      * @return an Object representing the return value of the script
-     * @see com.apple.applescript.AppleScriptEngine#eval(String, ScriptContext)
+     * @see apple.applescript.AppleScriptEngine#eval(String, ScriptContext)
      */
     public Object eval(final String script) throws ScriptException {
         return eval(script, getContext());
@@ -351,8 +351,8 @@ public class AppleScriptEngine implements ScriptEngine {
      * Implementation required by ScriptEngine parent<br />
      * Evaluate an AppleScript script passed as a source string with a custom ScriptContext.
      * @param script the AppleScript source to compile and execute.
-     * @param scriptContext the context to execute the script under
-     * @see com.apple.applescript.AppleScriptEngine#eval(String, ScriptContext)
+     * @param bindings  a Bindings object representing the contexts to execute inside
+     * @see apple.applescript.AppleScriptEngine#eval(String, ScriptContext)
      */
     public Object eval(final String script, final Bindings bindings) throws ScriptException {
         final Bindings tmp = getContext().getBindings(ScriptContext.ENGINE_SCOPE);
@@ -366,8 +366,8 @@ public class AppleScriptEngine implements ScriptEngine {
 
     /**
      * Implementation required by ScriptEngine parent
-     * @param script
-     * @param scriptContext
+     * @param script the AppleScript source to compile and execute.
+     * @param context ScriptContext for the engine
      */
     public Object eval(final String script, final ScriptContext context) throws ScriptException {
         checkSecurity();

@@ -40,7 +40,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
     };
 
     /** */
-    private AppleScriptEngine myScriptEngine;
+    private AppleScriptEngine scriptEngine;
     /** */
     private List<String> extensions;
     /** */
@@ -48,9 +48,13 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
     /** */
     private List<String> names;
 
+    static {
+        java.awt.Toolkit.getDefaultToolkit();
+    }
+
     /** */
     public AppleScriptEngineFactory() {
-        myScriptEngine = new AppleScriptEngine();
+        scriptEngine = new AppleScriptEngine(this);
         extensions = Collections.nCopies(1, FILEEXT);
         mimeTypes = Arrays.asList(MIMETYPES);
         names = Arrays.asList(NAMES);
@@ -131,7 +135,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
 
     @Override
     public AppleScriptEngine getScriptEngine() {
-        return myScriptEngine;
+        return scriptEngine;
     }
 }
 
