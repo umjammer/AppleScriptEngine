@@ -100,4 +100,14 @@ so that specify long name for each like "AppleScriptEngine", "AppleScriptRococoa
 
 ## TODO
 
- * ~~use jna instead of jni~~
+ * ~~use jna instead of jni~~ * notification by application (see javapackager plugin in pom.xml)
+ * notification by application (see javapackager plugin in pom.xml)
+   * javapackager (use snapshot because: [issue](https://github.com/fvarrui/JavaPackager/issues/239))
+   * ~~weired behavior~~ -> check runtime jdk version
+     * bundle 1,8 jre (info.plist :JavaX:JVMVersion doesn't work)
+     * stub direct doesn't work (selecting jdk version is still wrong)
+
+|        | app click on finder | run stub on commandline | open command |
+|--------|---------------------|-------------------------|--------------|
+|rococoa | OK                  |         crash           | OK           |
+|jni     | OK                  |         crash           | OK           |
