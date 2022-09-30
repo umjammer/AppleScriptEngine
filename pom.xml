@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>apple</groupId>
+  <groupId>vavi</groupId>
   <artifactId>vavi-script-apple</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1-SNAPSHOT</version>
 
   <properties>
     <javapackager.name>Notificator</javapackager.name>
     <javapackager.assetsDir>src/main/package</javapackager.assetsDir>
+    <rococoa.version>0.8.5-SNAPSHOT</rococoa.version>
   </properties>
 
   <distributionManagement>
     <repository>
       <id>github</id>
-      <name>GitHub umjammer Apache Maven Packages</name>
       <url>https://maven.pkg.github.com/umjammer/vavi-script-apple</url>
     </repository>
   </distributionManagement>
@@ -23,15 +23,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+          <encoding>utf-8</encoding>
         </configuration>
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
+        <version>3.1.2</version>
         <executions>
           <execution>
             <id>copy</id>
@@ -58,6 +61,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>native-maven-plugin</artifactId>
+        <version>1.0-alpha-11</version>
         <extensions>true</extensions>
         <configuration>
           <javahClassNames>
@@ -92,7 +96,7 @@
               -L/usr/local/lib -lobjc -framework Foundation -framework CoreServices
               -framework JavaNativeFoundation -framework AppKit</linkerStartOption>
           </linkerStartOptions>
-          <linkerFinalName></linkerFinalName>
+          <linkerFinalName/>
           <linkerEndOptions>
             <linkerEndOption>-o ${project.build.directory}/libAppleScriptEngine.dylib</linkerEndOption>
           </linkerEndOptions>
@@ -111,7 +115,9 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
+        <version>3.0.0-M1</version>
         <executions>
           <execution>
             <id>install-library</id>
@@ -210,11 +216,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M5</version>
+        <version>3.0.0-M7</version>
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
             -Djava.library.path=${project.build.directory}
+            -Djna.library.path=${project.build.directory}
+            -XstartOnFirstThread
           </argLine>
           <trimStackTrace>false</trimStackTrace>
           <forkMode>always</forkMode>
@@ -240,7 +248,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.8.1</version>
+        <version>5.8.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -251,12 +259,12 @@
     <dependency>
       <groupId>org.rococoa</groupId>
       <artifactId>rococoa-cocoa</artifactId>
-      <version>0.8.4</version>
+      <version>${rococoa.version}</version>
     </dependency>
     <dependency>
       <groupId>org.rococoa</groupId>
       <artifactId>rococoa-core</artifactId>
-      <version>0.8.4</version>
+      <version>${rococoa.version}</version>
     </dependency>
 
     <dependency>
