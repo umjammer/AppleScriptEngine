@@ -32,7 +32,7 @@ https://github.com/umjammer/rococoa/wiki/How-To-Install
 
 ```
       -Djava.library.path=${project.build.testOutputDirectory}              # for AppleScriptEngine
-      -Djan.library.path=${project.build.testOutputDirectory}               # for AppleScriptRococoa
+      -Djna.library.path=${project.build.testOutputDirectory}               # for AppleScriptRococoa
       -XstartOnFirstThread
 ```
 
