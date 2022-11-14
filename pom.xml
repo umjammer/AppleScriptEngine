@@ -3,12 +3,12 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-script-apple</artifactId>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.2.1</version>
 
   <properties>
     <javapackager.name>Notificator</javapackager.name>
     <javapackager.assetsDir>src/main/package</javapackager.assetsDir>
-    <rococoa.version>0.8.5-SNAPSHOT</rococoa.version>
+    <rococoa.version>0.8.4</rococoa.version>
   </properties>
 
   <distributionManagement>
