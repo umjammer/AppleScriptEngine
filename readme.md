@@ -48,13 +48,15 @@ so that specify long name for each like "AppleScriptEngine", "AppleScriptRococoa
  * notification by application (see javapackager plugin in pom.xml)
    * javapackager (use snapshot because: [issue](https://github.com/fvarrui/JavaPackager/issues/239))
    * ~~weired behavior~~ -> check runtime jdk version
-     * bundle 1,8 jre (info.plist :JavaX:JVMVersion doesn't work)
-     * stub direct doesn't work (selecting jdk version is still wrong)
+     * bundle 1.8 jre (because `info.plist:JavaX:JVMVersion` doesn't work)
+     * stub's jdk direction doesn't work well (*1)
 
 |        | app click on finder | run stub on commandline | open command |
 |--------|---------------------|-------------------------|--------------|
-|rococoa | OK                  |         crash           | OK           |
-|jni     | OK                  |         crash           | OK           |
+|rococoa | OK                  | ~~crash~~ *1            | OK           |
+|jni     | OK                  | ~~crash~~ *1            | OK           |
+
+<sub>[1] application path need to specified by full path</sub>
 
  * sticky notification
    * https://github.com/vjeantet/alerter
