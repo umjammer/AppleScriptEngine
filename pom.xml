@@ -23,8 +23,7 @@
       <id>local (not on github workflow)</id>
       <activation>
         <property>
-          <name>env.GITHUB_WORKFLOW</name>
-          <value/>
+          <name>!env.GITHUB_WORKFLOW</name>
         </property>
       </activation>
       <build>
