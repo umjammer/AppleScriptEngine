@@ -29,23 +29,23 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 
 public class AppleScriptEngineFactory implements ScriptEngineFactory {
+
+    private static Logger logger = Logger.getLogger(AppleScriptEngineFactory.class.getName());
+
     private static native void initNative();
 
     static {
         java.awt.Toolkit.getDefaultToolkit();
         System.loadLibrary("AppleScriptEngine");
         initNative();
-        TRACE("<static-init>");
-    }
-
-    static void TRACE(final String str) {
-//        System.out.println(AppleScriptEngineFactory.class.getName() + "." + str);
+        logger.finest("<static-init>");
     }
 
     /**
@@ -69,7 +69,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
     static final String LANGUAGE = "AppleScript";
 
     static ScriptEngineFactory getFactory() {
-        TRACE("getFactory()");
+        logger.finest("getFactory()");
         return new AppleScriptEngineFactory();
     }
 
@@ -77,7 +77,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * Initialize a new AppleScriptEngineFactory, replete with a member AppleScriptEngine
      */
     public AppleScriptEngineFactory() {
-        TRACE("<ctor>()");
+        logger.finest("<ctor>()");
     }
 
     /**
@@ -86,7 +86,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @return full name of the ScriptEngine
      */
     public String getEngineName() {
-        TRACE("getEngineName()");
+        logger.finest("getEngineName()");
         return ENGINE_NAME;
     }
 
@@ -96,7 +96,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @return version of the ScriptEngine
      */
     public String getEngineVersion() {
-        TRACE("getEngineVersion()");
+        logger.finest("getEngineVersion()");
         return ENGINE_VERSION;
     }
 
@@ -106,7 +106,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @return name of the language supported by the ScriptEngine(Factory)
      */
     public String getLanguageName() {
-        TRACE("getLanguageName()");
+        logger.finest("getLanguageName()");
         return LANGUAGE;
     }
 
@@ -116,7 +116,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @return language version supported by the ScriptEngine(Factory)
      */
     public String getLanguageVersion() {
-        TRACE("getLanguageVersion()");
+        logger.finest("getLanguageVersion()");
         return AccessController.doPrivileged(new PrivilegedAction<String>() {
             public String run() {
                 final AppleScriptEngine engine = new AppleScriptEngine(AppleScriptEngineFactory.this);
@@ -132,7 +132,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @return ArrayList of file extensions AppleScript associates with
      */
     public List<String> getExtensions() {
-        TRACE("getExtensions()");
+        logger.finest("getExtensions()");
         return Arrays.asList("scpt", "applescript", "app");
     }
 
@@ -143,7 +143,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @return ArrayList of mimetypes that AppleScript associates with
      */
     public List<String> getMimeTypes() {
-        TRACE("getMimeTypes()");
+        logger.finest("getMimeTypes()");
         return Arrays.asList("application/x-applescript", "text/plain", "text/applescript");
     }
 
@@ -151,10 +151,10 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * Returns an immutable list of short names for the ScriptEngine,
      * which may be used to identify the ScriptEngine by the ScriptEngineManager.
      *
-     * @return
+     * @return ArrayList of names that AppleScript associates with
      */
     public List<String> getNames() {
-        TRACE("getNames()");
+        logger.finest("getNames()");
         return Arrays.asList("AppleScriptEngine", "AppleScript", "OSA");
     }
 
@@ -162,12 +162,9 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * Returns a String which can be used to invoke a method of a Java
      * object using the syntax of the supported scripting language.
      *
-     * @param obj
-     *            unused -- AppleScript does not support objects
-     * @param m
-     *            function name
-     * @param args
-     *            arguments to the function
+     * @param obj unused -- AppleScript does not support objects
+     * @param fname function name
+     * @param args arguments to the function
      * @return the AppleScript string calling the method
      */
     public String getMethodCallSyntax(final String obj, final String fname, final String ... args) {
@@ -213,7 +210,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
     public String getProgram(final String ... statements) {
         final StringBuilder program = new StringBuilder();
         for (final String statement : statements) {
-            program.append(statement + "\n");
+            program.append(statement).append("\n");
         }
         return program.toString();
     }

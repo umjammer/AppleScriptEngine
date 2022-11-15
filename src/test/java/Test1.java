@@ -21,6 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class Test1 {
 
+    /**
+     * TODO notification needs to make it application
+     * @see vavi.apps.notificator.Notificator
+     */
     @Test
     void test1() throws Exception {
         ScriptEngineManager factory = new ScriptEngineManager();

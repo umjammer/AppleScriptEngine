@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
@@ -50,7 +51,7 @@ public class AppleScriptEngine implements ScriptEngine {
     private static final String STR_THISLANGUAGE = "AppleScript";
 
     /** */
-    private static final AppleScriptEngineFactory myFactory = new AppleScriptEngineFactory();
+    private ScriptEngineFactory factory;
 
     /** */
     private ScriptContext defaultContext;
@@ -63,10 +64,11 @@ public class AppleScriptEngine implements ScriptEngine {
     }
 
     /** */
-    public AppleScriptEngine() {
-        setContext(new SimpleScriptContext());
+    public AppleScriptEngine(AppleScriptEngineFactory factory) {
+        this.factory = factory;
+        defaultContext = new SimpleScriptContext();
         // set special values
-        put(LANGUAGE_VERSION, "1.0");
+        put(LANGUAGE_VERSION, "2.7");
         put(LANGUAGE, STR_THISLANGUAGE);
         put(ENGINE, MY_NAME);
         put(ENGINE_VERSION, __ENGINE_VERSION__);
@@ -174,8 +176,8 @@ Debug.printf(Level.FINE, "%08x, %s, %s", desc.descriptorType(), Arrays.toString(
     }
 
     @Override
-    public AppleScriptEngineFactory getFactory() {
-        return myFactory;
+    public ScriptEngineFactory getFactory() {
+        return factory;
     }
 
     /** */
