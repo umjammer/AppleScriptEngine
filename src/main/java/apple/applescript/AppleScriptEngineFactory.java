@@ -25,12 +25,9 @@
 
 package apple.applescript;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -117,12 +114,8 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      */
     public String getLanguageVersion() {
         logger.finest("getLanguageVersion()");
-        return AccessController.doPrivileged(new PrivilegedAction<String>() {
-            public String run() {
-                final AppleScriptEngine engine = new AppleScriptEngine(AppleScriptEngineFactory.this);
-                return engine.getLanguageVersion();
-            }
-        });
+        final AppleScriptEngine engine = new AppleScriptEngine(AppleScriptEngineFactory.this);
+        return engine.getLanguageVersion();
     }
 
     /**
@@ -167,7 +160,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @param args arguments to the function
      * @return the AppleScript string calling the method
      */
-    public String getMethodCallSyntax(final String obj, final String fname, final String ... args) {
+    public String getMethodCallSyntax(String obj, String fname, String ... args) {
 //        StringBuilder builder = new StringBuilder();
 //        builder.append("my " + fname + "(");
 //        // TODO -- do
@@ -183,7 +176,7 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @param toDisplay
      * @return
      */
-    public String getOutputStatement(final String toDisplay) {
+    public String getOutputStatement(String toDisplay) {
         // TODO -- this might even be good enough? XD
         return getMethodCallSyntax(null, "print", toDisplay);
     }
@@ -195,8 +188,8 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      *            the key to look up
      * @return the static preseeded value for the key in the ScriptEngine, if it exists, otherwise <code>null</code>
      */
-    public Object getParameter(final String key) {
-        final AppleScriptEngine engine = new AppleScriptEngine(this);
+    public Object getParameter(String key) {
+        AppleScriptEngine engine = new AppleScriptEngine(this);
         if (!engine.getBindings(ScriptContext.ENGINE_SCOPE).containsKey(key)) return null;
         return engine.getBindings(ScriptContext.ENGINE_SCOPE).get(key);
     }
@@ -207,9 +200,9 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @param statements
      * @return
      */
-    public String getProgram(final String ... statements) {
-        final StringBuilder program = new StringBuilder();
-        for (final String statement : statements) {
+    public String getProgram(String ... statements) {
+        StringBuilder program = new StringBuilder();
+        for (String statement : statements) {
             program.append(statement).append("\n");
         }
         return program.toString();
@@ -221,7 +214,6 @@ public class AppleScriptEngineFactory implements ScriptEngineFactory {
      * @return new AppleScriptEngine with this factory as it's parent
      */
     public ScriptEngine getScriptEngine() {
-        AppleScriptEngine.checkSecurity();
         return new AppleScriptEngine(this);
     }
 }

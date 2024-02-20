@@ -11,7 +11,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.logging.Level;
-
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -24,10 +23,8 @@ import org.rococoa.Foundation;
 import org.rococoa.ObjCObjectByReference;
 import org.rococoa.cocoa.foundation.NSDictionary;
 import org.rococoa.cocoa.foundation.NSProcessInfo;
-
 import vavi.util.ByteUtil;
 import vavi.util.Debug;
-
 import vavix.rococoa.foundation.AEConverter;
 import vavix.rococoa.foundation.NSAppleEventDescriptor;
 import vavix.rococoa.foundation.NSAppleScript;
@@ -58,11 +55,6 @@ public class AppleScriptEngine implements ScriptEngine {
 
     private static AEConverter converter = new AEConverter();
 
-    static void checkSecurity() {
-        final SecurityManager securityManager = System.getSecurityManager();
-        if (securityManager != null) securityManager.checkExec("/usr/bin/osascript");
-    }
-
     /** */
     public AppleScriptEngine(AppleScriptEngineFactory factory) {
         this.factory = factory;
@@ -90,7 +82,6 @@ public class AppleScriptEngine implements ScriptEngine {
 
     @Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
-        checkSecurity();
 
         ObjCObjectByReference error = new ObjCObjectByReference();
 
@@ -197,7 +188,7 @@ e.printStackTrace(System.err);
     }
 
     /** java -> ae */
-    private NSAppleEventDescriptor toNSAppleEventDescriptor(ScriptContext context) {
+    private static NSAppleEventDescriptor toNSAppleEventDescriptor(ScriptContext context) {
 
         Object value = context.getAttribute("javax.script.function", ScriptContext.ENGINE_SCOPE);
         String function = value != null ? (String) value : null;

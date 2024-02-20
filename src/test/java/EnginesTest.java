@@ -51,7 +51,7 @@ class EnginesTest {
 
         ScriptEngine engine = mgr.getEngineByName("AppleScriptEngine");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("apple"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("apple"));
 
         Long result = (Long) engine.eval(script);
         System.out.println("Pick a card script result: " + result);

@@ -43,29 +43,29 @@ import vavi.util.Debug;
 public class AEConverter {
 
     /** ae -> java */
-    private Map<Integer, Function<NSAppleEventDescriptor, Object>> handlerDict = new HashMap<>();
+    private final Map<Integer, Function<NSAppleEventDescriptor, Object>> handlerDict = new HashMap<>();
 
     {
         // register default handlers
 
         // string -> NSStrings
-        handlerDict.put(NSAppleEventDescriptor.typeUnicodeText, this::stringWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeText, this::stringWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeUTF8Text, this::stringWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeCString, this::stringWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeChar, this::stringWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeUnicodeText, AEConverter::stringWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeText, AEConverter::stringWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeUTF8Text, AEConverter::stringWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeCString, AEConverter::stringWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeChar, AEConverter::stringWithAEDesc);
 
         // number/bool -> NSNumber
-        handlerDict.put(NSAppleEventDescriptor.typeBoolean, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeTrue, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeFalse, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeSInt16, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeSInt32, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeUInt32, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeSInt64, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeIEEE32BitFloatingPoint, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeIEEE64BitFloatingPoint, this::numberWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.type128BitFloatingPoint, this::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeBoolean, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeTrue, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeFalse, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeSInt16, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeSInt32, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeUInt32, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeSInt64, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeIEEE32BitFloatingPoint, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeIEEE64BitFloatingPoint, AEConverter::numberWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.type128BitFloatingPoint, AEConverter::numberWithAEDesc);
 
         // list -> NSArray
         handlerDict.put(NSAppleEventDescriptor.typeAEList, this::arrayWithAEDesc);
@@ -74,21 +74,21 @@ public class AEConverter {
         handlerDict.put(NSAppleEventDescriptor.typeAERecord, this::dictionaryWithAEDesc);
 
         // date -> NSDate
-        handlerDict.put(NSAppleEventDescriptor.typeLongDateTime, this::dateWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeLongDateTime, AEConverter::dateWithAEDesc);
 
         // images -> NSImage
-        handlerDict.put(NSAppleEventDescriptor.typeTIFF, this::imageWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeJPEG, this::imageWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeGIF, this::imageWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typePict, this::imageWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeIconFamily, this::imageWithAEDesc);
-        handlerDict.put(NSAppleEventDescriptor.typeIconAndMask, this::imageWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeTIFF, AEConverter::imageWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeJPEG, AEConverter::imageWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeGIF, AEConverter::imageWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typePict, AEConverter::imageWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeIconFamily, AEConverter::imageWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeIconAndMask, AEConverter::imageWithAEDesc);
 
         // vers -> NSString
-        handlerDict.put(NSAppleEventDescriptor.typeVersion, this::versionWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeVersion, AEConverter::versionWithAEDesc);
 
         // null -> NSNull
-        handlerDict.put(NSAppleEventDescriptor.typeNull, this::nullWithAEDesc);
+        handlerDict.put(NSAppleEventDescriptor.typeNull, AEConverter::nullWithAEDesc);
     }
 
     /** ae -> java */
@@ -135,7 +135,7 @@ Debug.println("no handlar: " + desc.descriptorType());
     }
 
     /** ae -> java */
-    private Object numberWithAEDesc(NSAppleEventDescriptor desc) {
+    private static Object numberWithAEDesc(NSAppleEventDescriptor desc) {
         int type = desc.descriptorType();
 
         if ((type == NSAppleEventDescriptor.typeTrue) ||
@@ -175,7 +175,7 @@ Debug.println("no handlar: " + desc.descriptorType());
     }
 
     /** ae -> java */
-    private BufferedImage imageWithAEDesc(NSAppleEventDescriptor desc) {
+    private static BufferedImage imageWithAEDesc(NSAppleEventDescriptor desc) {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(desc.data().bytes().getByteArray(0, desc.data().length()));
             return ImageIO.read(bais);
@@ -185,22 +185,22 @@ Debug.println("no handlar: " + desc.descriptorType());
     }
 
     /** ae -> java */
-    private long dateWithAEDesc(NSAppleEventDescriptor desc) {
+    private static long dateWithAEDesc(NSAppleEventDescriptor desc) {
         return (long) desc.dateValue().timeIntervalSince1970() * 1000;
     }
 
     /** ae -> java */
-    private Object nullWithAEDesc(NSAppleEventDescriptor desc) {
+    private static Object nullWithAEDesc(NSAppleEventDescriptor desc) {
         return null;
     }
 
     /** ae -> java */
-    private String stringWithAEDesc(NSAppleEventDescriptor desc) {
+    private static String stringWithAEDesc(NSAppleEventDescriptor desc) {
         return desc.stringValue();
     }
 
     /** ae -> java */
-    private String versionWithAEDesc(NSAppleEventDescriptor desc) {
+    private static String versionWithAEDesc(NSAppleEventDescriptor desc) {
         return desc.stringValue(); // TODO
     }
 
@@ -218,6 +218,7 @@ Debug.println("no handlar: " + desc.descriptorType());
     }
 
     /** java -> ae */
+    @SuppressWarnings("unchecked")
     public NSAppleEventDescriptor toAe(Object self) {
         if (self == null) {
             return NSAppleEventDescriptor.nullDescriptor();
@@ -248,18 +249,15 @@ Debug.println("no handlar: " + desc.descriptorType());
             }
         }
 
-        if (self instanceof Dimension) {
-            Dimension size = (Dimension) self;
+        if (self instanceof Dimension size) {
             return toAe(Arrays.asList(size.width, size.height));
         }
 
-        if (self instanceof Point) {
-            Point point = (Point) self;
+        if (self instanceof Point point) {
             return toAe(Arrays.asList(point.x, point.y));
         }
 
-        if (self instanceof Rectangle) {
-            Rectangle rect = (Rectangle) self;
+        if (self instanceof Rectangle rect) {
             return toAe(Arrays.asList(rect.x, rect.y, rect.width, rect.height));
         }
 
@@ -273,7 +271,7 @@ Debug.println("no handlar: " + desc.descriptorType());
         }
 
         if (self instanceof List) {
-            List list = (List) self;
+            List<NSAppleEventDescriptor> list = (List<NSAppleEventDescriptor>) self;
             NSAppleEventDescriptor resultDesc = NSAppleEventDescriptor.listDescriptor();
             int i = 1;
             for (Object e : list) {
@@ -282,7 +280,7 @@ Debug.println("no handlar: " + desc.descriptorType());
         }
 
         if (self instanceof Map) {
-            return aeDescriptorValue((Map) self);
+            return aeDescriptorValue((Map<Object, Object>) self);
         }
 
         if (self instanceof Number) {
@@ -307,14 +305,14 @@ Debug.println("unhandled :" + self.getClass());
             }
         }
 
-        if (userFields.size() > 0) {
+        if (!userFields.isEmpty()) {
             resultDesc.setDescriptor_forKeyword(toAe(userFields), NSAppleEventDescriptor.keyASUserRecordFields);
         }
 
         return resultDesc;
     }
 
-    private NSAppleEventDescriptor aeDescriptorValue(Number self) {
+    private static NSAppleEventDescriptor aeDescriptorValue(Number self) {
         if (self instanceof Integer) {
             return NSAppleEventDescriptor.descriptorWithInt32(self.intValue());
         } else  if (self instanceof Short) {

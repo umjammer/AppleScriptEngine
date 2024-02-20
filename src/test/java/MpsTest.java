@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -28,12 +27,12 @@ class MpsTest {
         // Create a AppleScript engine.
         ScriptEngine engine = factory.getEngineByName("AppleScriptEngine");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("apple"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("apple"));
 
         FileReader rdr = new FileReader("src/test/resources/mps.as");
         @SuppressWarnings("unchecked")
         ArrayList<ArrayList<?>> procs = (ArrayList<ArrayList<?>>) engine.eval(rdr);
-        assertTrue(procs.size() > 0);
+        assertFalse(procs.isEmpty());
         for (ArrayList<?> proc : procs) {
             String pid = proc.get(0).toString();
             String name = proc.get(1).toString();

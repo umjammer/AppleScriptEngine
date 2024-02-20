@@ -29,13 +29,13 @@ class MpsRococoaTest {
         // Create a AppleScript engine.
         ScriptEngine engine = factory.getEngineByName("AppleScriptRococoa");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("vavix.rococoa"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("vavix.rococoa"));
 
         FileReader rdr = new FileReader("src/test/resources/mps.as");
         @SuppressWarnings("unchecked")
         List<List<?>> procs = (List<List<?>>) engine.eval(rdr);
 Debug.println(procs);
-        assertTrue(procs.size() > 0);
+        assertTrue(!procs.isEmpty());
         for (List<?> proc : procs) {
             String pid = proc.get(0).toString();
             String name = proc.get(1).toString();
