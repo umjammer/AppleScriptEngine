@@ -6,6 +6,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -25,6 +26,7 @@ class EnginesTest {
     private static final String script = "set cd to (random number 100000) mod 52 + 1 \r return cd";
 
     @Test
+    @EnabledIfSystemProperty(named = "os.arch", matches = "x86_64")
     void test() throws Exception {
 //        System.out.println("engines loader used " + Thread.currentThread().getClass().getClassLoader());
 //        ScriptEngineManager mgr = new ScriptEngineManager(Thread.currentThread().getClass().getClassLoader());

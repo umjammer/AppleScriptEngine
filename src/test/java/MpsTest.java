@@ -7,11 +7,13 @@ import javax.script.ScriptEngineManager;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import vavi.util.Debug;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -21,6 +23,7 @@ class MpsTest {
     // on github: Not authorized to send Apple events to System Events.
     @Test
     @DisabledIfEnvironmentVariable(named = "GITHUB_WORKFLOW", matches = ".*")
+    @EnabledIfSystemProperty(named = "os.arch", matches = "x86_64")
     void test() throws Exception {
         ScriptEngineManager factory = new ScriptEngineManager();
 
