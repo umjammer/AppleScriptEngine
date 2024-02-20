@@ -1,5 +1,3 @@
-package vavix.rococoa.foundation;
-
 /*
  * Copyright (c) 2002-2009 David Kocher. All rights reserved.
  *
@@ -18,6 +16,8 @@ package vavix.rococoa.foundation;
  * Bug fixes, suggestions and comments should be sent to:
  * dkocher@cyberduck.ch
  */
+
+package vavix.rococoa.foundation;
 
 import org.rococoa.ObjCClass;
 import org.rococoa.Rococoa;

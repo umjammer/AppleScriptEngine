@@ -6,7 +6,6 @@
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
@@ -18,9 +17,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.rococoa.Foundation;
 import org.rococoa.ObjCObjectByReference;
 import org.rococoa.cocoa.foundation.NSDictionary;
-
 import vavi.util.Debug;
-
 import vavix.rococoa.foundation.NSAppleEventDescriptor;
 import vavix.rococoa.foundation.NSAppleScript;
 
@@ -41,9 +38,6 @@ public class TestRococa {
     @Test
     @DisplayName("return takes long time. why??? -> run on main thread")
     void test1() throws Exception {
-        final SecurityManager securityManager = System.getSecurityManager();
-        if (securityManager != null) securityManager.checkExec("/usr/bin/osascript");
-
         ObjCObjectByReference outError = new ObjCObjectByReference();
         NSAppleEventDescriptor desc = Foundation.callOnMainThread(() -> {
             String command = "beep";
@@ -66,7 +60,7 @@ Debug.println("Done");
         ScriptEngineManager sem = new ScriptEngineManager();
         ScriptEngine engine = sem.getEngineByName("AppleScriptRococoa");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("vavix.rococoa"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("vavix.rococoa"));
 
         String statement = "1 + 2";
         Object r = engine.eval(statement);
@@ -80,7 +74,7 @@ Debug.println("Done: " + r);
         ScriptEngineManager sem = new ScriptEngineManager();
         ScriptEngine engine = sem.getEngineByName("AppleScriptRococoa");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("vavix.rococoa"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("vavix.rococoa"));
 
         String statement = "beep";
         Object r = engine.eval(statement);
@@ -93,7 +87,7 @@ Debug.println("Done: " + r);
         ScriptEngineManager sem = new ScriptEngineManager();
         ScriptEngine engine = sem.getEngineByName("AppleScriptRococoa");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("vavix.rococoa"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("vavix.rococoa"));
 
         String statement =
                 "display notification \"All graphics have been converted.\" " +
@@ -112,14 +106,14 @@ Debug.println("Done: " + r);
         ScriptEngineManager sem = new ScriptEngineManager();
         ScriptEngine engine = sem.getEngineByName("AppleScriptRococoa");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("vavix.rococoa"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("vavix.rococoa"));
 
         Object r = engine.eval(script);
 Debug.println("Done: " + r);
     }
 
     /**
-     * @param args
+     * @param args none
      */
     public static void main(String[] args) throws Exception {
 //        String command = "log \"hello world\n\"";

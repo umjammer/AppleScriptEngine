@@ -33,8 +33,8 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -43,6 +43,9 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
+import org.scijava.nativelib.NativeLoader;
+
+
 /**
  * AppleScriptEngine implements JSR 223 for AppleScript on Mac OS X
  */
@@ -50,22 +53,21 @@ public class AppleScriptEngine implements ScriptEngine {
     static Logger logger = Logger.getLogger(AppleScriptEngine.class.getName());
     private static native void initNative();
 
-    private static native long createContextFrom(final Object object);
-    private static native Object createObjectFrom(final long context);
-    private static native void disposeContext(final long context);
+    private static native long createContextFrom(Object object);
+    private static native Object createObjectFrom(long context);
+    private static native void disposeContext(long context);
 
-    private static native long evalScript(final String script, long contextptr);
-    private static native long evalScriptFromURL(final String filename, long contextptr);
+    private static native long evalScript(String script, long contextptr);
+    private static native long evalScriptFromURL(String filename, long contextptr);
 
     static {
-        System.loadLibrary("AppleScriptEngine");
-        initNative();
-        logger.exiting(AppleScriptEngine.class.getName(), "<static-init>");
-    }
-
-    static void checkSecurity() {
-        final SecurityManager securityManager = System.getSecurityManager();
-        if (securityManager != null) securityManager.checkExec("/usr/bin/osascript");
+        try {
+            NativeLoader.loadLibrary("AppleScriptEngine");
+            initNative();
+            logger.exiting(AppleScriptEngine.class.getName(), "<static-init>");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -137,7 +139,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param factory
      * @see apple.applescript.AppleScriptEngine#init()
      */
-    public AppleScriptEngine(final ScriptEngineFactory factory) {
+    public AppleScriptEngine(ScriptEngineFactory factory) {
         // inherit the factory passed to us
         this.factory = factory;
 
@@ -162,8 +164,8 @@ public class AppleScriptEngine implements ScriptEngine {
     private void init() {
         logger.entering(AppleScriptEngine.class.getName(), "init()");
         // set up our context
-/* TODO -- name of current executable?  bad java documentation at:
- * http://java.sun.com/javase/6/docs/api/javax/script/ScriptEngine.html#FILENAME */
+        // TODO -- name of current executable?  bad java documentation at:
+        // http://java.sun.com/javase/6/docs/api/javax/script/ScriptEngine.html#FILENAME
         put(ScriptEngine.FILENAME, "");
         put(ScriptEngine.ENGINE, getEngine());
         put(ScriptEngine.ENGINE_VERSION, getEngineVersion());
@@ -182,9 +184,9 @@ public class AppleScriptEngine implements ScriptEngine {
     protected String getLanguageVersion() {
         logger.entering(AppleScriptEngine.class.getName(), "AppleScriptEngine.getLanguageVersion()");
         try {
-            final Object result = eval("get the version of AppleScript");
+            Object result = eval("get the version of AppleScript");
             if (result instanceof String) return (String)result;
-        } catch (final ScriptException e) { e.printStackTrace(); }
+        } catch (ScriptException e) { logger.log(Level.FINE, e.getMessage(), e); }
         return "unknown";
     }
 
@@ -210,7 +212,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * Set a new context for the engine
      * @param context the new context to install in the engine
      */
-    public void setContext(final ScriptContext context) {
+    public void setContext(ScriptContext context) {
         this.context = context;
     }
 
@@ -229,7 +231,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param scope contextual scope to return.
      * @return the bindings in the engine for the scope indicated by the parameter
      */
-    public Bindings getBindings(final int scope) {
+    public Bindings getBindings(int scope) {
         return context.getBindings(scope);
     }
 
@@ -239,7 +241,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param bindings a set of bindings to assign to the engine
      * @param scope the scope that the passed bindings should be assigned to
      */
-    public void setBindings(final Bindings bindings, final int scope) {
+    public void setBindings(Bindings bindings, int scope) {
         context.setBindings(bindings, scope);
     }
 
@@ -249,7 +251,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param key the key of the pair
      * @param value the value of the pair
      */
-    public void put(final String key, final Object value) {
+    public void put(String key, Object value) {
         getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
     }
 
@@ -259,7 +261,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param key the key of the pair
      * @return the value of the pair
      */
-    public Object get(final String key) {
+    public Object get(String key) {
         return getBindings(ScriptContext.ENGINE_SCOPE).get(key);
     }
 
@@ -271,7 +273,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return an Object corresponding to the return value of the script
      * @see apple.applescript.AppleScriptEngine#eval(Reader, ScriptContext)
      */
-    public Object eval(final Reader reader) throws ScriptException {
+    public Object eval(Reader reader) throws ScriptException {
         return eval(reader, getContext());
     }
 
@@ -283,10 +285,10 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return the return value of the script
      * @see apple.applescript.AppleScriptEngine#eval(Reader, ScriptContext)
      */
-    public Object eval(final Reader reader, final Bindings bindings) throws ScriptException {
-        final Bindings tmp = getContext().getBindings(ScriptContext.ENGINE_SCOPE);
+    public Object eval(Reader reader, Bindings bindings) throws ScriptException {
+        Bindings tmp = getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         getContext().setBindings(bindings, ScriptContext.ENGINE_SCOPE);
-        final Object retval = eval(reader);
+        Object retval = eval(reader);
         getContext().setBindings(tmp, ScriptContext.ENGINE_SCOPE);
         return retval;
     }
@@ -299,8 +301,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param context the context to execute the script under
      * @return an Object corresponding to the return value of the script
      */
-    public Object eval(final Reader reader, final ScriptContext context) throws ScriptException {
-        checkSecurity();
+    public Object eval(Reader reader, ScriptContext context) throws ScriptException {
 
         // write our passed reader to a temporary file
         File tmpfile;
@@ -321,9 +322,9 @@ public class AppleScriptEngine implements ScriptEngine {
             tmpwrite.close();
 
             // set up our context business
-            final long contextptr = scriptContextToNSDictionary(context);
+            long contextptr = scriptContextToNSDictionary(context);
             try {
-                final long retCtx = evalScriptFromURL("file://" + tmpfile.getCanonicalPath(), contextptr);
+                long retCtx = evalScriptFromURL("file://" + tmpfile.getCanonicalPath(), contextptr);
                 Object retVal = (retCtx == 0) ? null : createObjectFrom(retCtx);
                 disposeContext(retCtx);
                 return retVal;
@@ -331,7 +332,7 @@ public class AppleScriptEngine implements ScriptEngine {
                 disposeContext(contextptr);
                 tmpfile.delete();
             }
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new ScriptException(e);
         }
     }
@@ -343,7 +344,7 @@ public class AppleScriptEngine implements ScriptEngine {
      * @return an Object representing the return value of the script
      * @see apple.applescript.AppleScriptEngine#eval(String, ScriptContext)
      */
-    public Object eval(final String script) throws ScriptException {
+    public Object eval(String script) throws ScriptException {
         return eval(script, getContext());
     }
 
@@ -354,11 +355,11 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param bindings  a Bindings object representing the contexts to execute inside
      * @see apple.applescript.AppleScriptEngine#eval(String, ScriptContext)
      */
-    public Object eval(final String script, final Bindings bindings) throws ScriptException {
-        final Bindings tmp = getContext().getBindings(ScriptContext.ENGINE_SCOPE);
+    public Object eval(String script, Bindings bindings) throws ScriptException {
+        Bindings tmp = getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         getContext().setBindings(bindings, ScriptContext.ENGINE_SCOPE);
 
-        final Object retval = eval(script);
+        Object retval = eval(script);
         getContext().setBindings(tmp, ScriptContext.ENGINE_SCOPE);
 
         return retval;
@@ -369,11 +370,10 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param script the AppleScript source to compile and execute.
      * @param context ScriptContext for the engine
      */
-    public Object eval(final String script, final ScriptContext context) throws ScriptException {
-        checkSecurity();
-        final long ctxPtr = scriptContextToNSDictionary(context);
+    public Object eval(String script, ScriptContext context) throws ScriptException {
+        long ctxPtr = scriptContextToNSDictionary(context);
         try {
-            final long retCtx = evalScript(script, ctxPtr);
+            long retCtx = evalScript(script, ctxPtr);
             Object retVal = (retCtx == 0) ? null : createObjectFrom(retCtx);
             disposeContext(retCtx);
             return retVal;
@@ -387,9 +387,9 @@ public class AppleScriptEngine implements ScriptEngine {
      * @param context ScriptContext for the engine
      * @return a pointer to an NSDictionary
      */
-    private long scriptContextToNSDictionary(final ScriptContext context) throws ScriptException {
-        final Map<String, Object> contextAsMap = new HashMap<>();
-        for (final Entry<String, Object> e : context.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
+    private static long scriptContextToNSDictionary(ScriptContext context) throws ScriptException {
+        Map<String, Object> contextAsMap = new HashMap<>();
+        for (Entry<String, Object> e : context.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
             contextAsMap.put(e.getKey().replaceAll("\\.", "_"), e.getValue());
         }
         return createContextFrom(contextAsMap);

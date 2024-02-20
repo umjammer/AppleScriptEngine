@@ -1,5 +1,3 @@
-package vavix.rococoa.foundation;
-
 /*
  * Copyright (c) 2002-2009 David Kocher. All rights reserved.
  *
@@ -18,6 +16,8 @@ package vavix.rococoa.foundation;
  * Bug fixes, suggestions and comments should be sent to:
  * dkocher@cyberduck.ch
  */
+
+package vavix.rococoa.foundation;
 
 import org.rococoa.ObjCClass;
 import org.rococoa.Rococoa;
@@ -48,7 +48,7 @@ public abstract class NSAppleScript extends NSObject {
     /**
      * Factory method<br>
      *
-     * @see #initWithContentsOfURL_error(com.sun.jna.Pointer, com.sun.jna.ptr.ByReference)
+     * @see #initWithContentsOfURL_error(NSURL , com.sun.jna.ptr.ByReference)
      */
     public static NSAppleScript createWithContentsOfURL_error(NSURL url, com.sun.jna.ptr.ByReference errorInfo) {
         return CLASS.alloc().initWithContentsOfURL_error(url, errorInfo);

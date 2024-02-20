@@ -30,7 +30,7 @@ class Test1 {
         ScriptEngineManager factory = new ScriptEngineManager();
         ScriptEngine engine = factory.getEngineByName("AppleScriptRococoa");
 Debug.println("engine: " + engine.getClass());
-        assertTrue(engine.getClass().getPackage().getName().toString().startsWith("vavix.rococoa"));
+        assertTrue(engine.getClass().getPackage().getName().startsWith("vavix.rococoa"));
 
         String script =
                 "display notification \"All graphics have been converted.\" " +

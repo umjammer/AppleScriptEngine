@@ -3,24 +3,16 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-script-apple</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2</version>
 
   <properties>
     <javapackager.name>Notificator</javapackager.name>
     <javapackager.assetsDir>src/main/package</javapackager.assetsDir>
-    <rococoa.version>0.8.4</rococoa.version>
   </properties>
-
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/umjammer/vavi-script-apple</url>
-    </repository>
-  </distributionManagement>
 
   <profiles>
     <profile>
-      <id>local (not on github workflow)</id>
+      <id>javapackager</id>
       <activation>
         <property>
           <name>!env.GITHUB_WORKFLOW</name>
@@ -31,7 +23,7 @@
           <plugin>
             <groupId>io.github.fvarrui</groupId>
             <artifactId>javapackager</artifactId>
-            <version>1.7.0-SNAPSHOT</version>
+            <version>1.7.0</version>
             <executions>
               <execution>
                 <phase>package</phase>
@@ -74,6 +66,156 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>local (not on jitpack)</id>
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>x86_64</arch>
+        </os>
+        <property>
+          <name>env.JITPACK</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+            <executions>
+              <execution>
+                <id>javah</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <phase>compile</phase>
+                <configuration>
+                  <compilerArgs>
+                    <arg>-h</arg>
+                    <arg>${project.build.directory}/native</arg>
+                    <arg>-d</arg>
+                    <arg>${project.build.directory}/native/classes</arg>
+                  </compilerArgs>
+                  <includes>
+                    <include>apple/applescript/AppleScriptEngine.java</include>
+                    <include>apple/applescript/AppleScriptEngineFactory.java</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>javah</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>compile</phase>
+                <configuration>
+                  <target>
+                    <mkdir dir="${project.build.outputDirectory}/natives/osx_64" />
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <!-- ${java.home} contains whitespace (e.g. JetBrain's JVM) doesn't work -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <version>1.0-alpha-11</version>
+            <extensions>true</extensions>
+            <configuration>
+              <compilerProvider>generic-classic</compilerProvider>
+              <compilerStartOptions>
+                <compilerStartOption>-g -Wall -O2 -fomit-frame-pointer -fPIC</compilerStartOption>
+                <!-- unless locating jdk includes, cause error why??? -->
+                <compilerStartOption>-arch x86_64
+                  -I${java.home}/include
+                  -I${java.home}/include/darwin
+                  -I${project.build.directory}/native
+                </compilerStartOption>
+              </compilerStartOptions>
+              <sources>
+                <source>
+                  <directory>src/main/native</directory>
+                  <fileNames>
+                    <fileName>AppleScriptEngine.m</fileName>
+                    <fileName>AppleScriptExecutionContext.m</fileName>
+                    <fileName>AS_NS_ConversionUtils.m</fileName>
+                    <fileName>NS_Java_ConversionUtils.m</fileName>
+                  </fileNames>
+                </source>
+              </sources>
+              <linkerStartOptions>
+                <linkerStartOption>-dynamiclib -arch x86_64
+                  -lobjc -framework Foundation -framework CoreServices
+                  -framework JavaNativeFoundation -framework AppKit</linkerStartOption>
+              </linkerStartOptions>
+              <linkerFinalName/>
+              <linkerEndOptions>
+                <linkerEndOption>-o ${project.build.outputDirectory}/natives/osx_64/libAppleScriptEngine.dylib</linkerEndOption>
+              </linkerEndOptions>
+            </configuration>
+            <executions>
+              <execution>
+                <id>dylib</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>compile</goal>
+                  <goal>link</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>on jitpack</id>
+      <activation>
+        <property>
+          <name>env.JITPACK</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>assets-download</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>compile</phase>
+                <configuration>
+                  <target>
+                    <mkdir dir="${project.build.outputDirectory}/natives/osx_64" />
+                    <get src="${project.url}/releases/download/${project.version}/libAppleScriptEngine.dylib"
+                         dest="${project.build.outputDirectory}/natives/osx_64"
+                         usetimestamp="true"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <build>
@@ -81,156 +223,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.11.0</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>utf-8</encoding>
+          <release>17</release>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.rococoa</groupId>
-                  <artifactId>rococoa-core</artifactId>
-                  <type>dylib</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-                  <destFileName>librococoa.dylib</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>native-maven-plugin</artifactId>
-        <version>1.0-alpha-11</version>
-        <extensions>true</extensions>
-        <configuration>
-          <javahClassNames>
-            <javahClassName>apple.applescript.AppleScriptEngine</javahClassName>
-            <javahClassName>apple.applescript.AppleScriptEngineFactory</javahClassName>
-          </javahClassNames>
-          <javahSearchJNIFromDependencies>false</javahSearchJNIFromDependencies>
-          <javahOS>darwin</javahOS>
-          <compilerProvider>generic-classic</compilerProvider>
-          <compilerStartOptions>
-            <compilerStartOption>-g -Wall -O2 -fomit-frame-pointer -fPIC</compilerStartOption>
-            <!-- unless locating jdk includes, cause error why??? -->
-            <compilerStartOption>-arch x86_64
-                  -I${java.home}/../include
-                  -I${java.home}/../include/darwin
-                  -I.
-            </compilerStartOption>
-          </compilerStartOptions>
-          <sources>
-            <source>
-              <directory>src/main/native</directory>
-              <fileNames>
-                <fileName>AppleScriptEngine.m</fileName>
-                <fileName>AppleScriptExecutionContext.m</fileName>
-                <fileName>AS_NS_ConversionUtils.m</fileName>
-                <fileName>NS_Java_ConversionUtils.m</fileName>
-              </fileNames>
-            </source>
-          </sources>
-          <linkerStartOptions>
-            <linkerStartOption>-dynamiclib -arch x86_64
-              -L/usr/local/lib -lobjc -framework Foundation -framework CoreServices
-              -framework JavaNativeFoundation -framework AppKit</linkerStartOption>
-          </linkerStartOptions>
-          <linkerFinalName/>
-          <linkerEndOptions>
-            <linkerEndOption>-o ${project.build.directory}/libAppleScriptEngine.dylib</linkerEndOption>
-          </linkerEndOptions>
-        </configuration>
-        <executions>
-          <execution>
-            <id>compile-pvorbis</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>javah</goal>
-              <goal>compile</goal>
-              <goal>link</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>3.0.0-M1</version>
-        <executions>
-          <execution>
-            <id>install-library</id>
-            <phase>install</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>${project.artifactId}</artifactId>
-              <version>${project.version}</version>
-              <packaging>dylib</packaging>
-              <file>${project.build.directory}/libAppleScriptEngine.dylib</file>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <!-- because of maven deploy-file uploads source, jar also -->
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <executions>
-          <execution>
-            <id>deploy-library</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>mvn</executable>
-              <arguments>
-                <argument>deploy:deploy-file</argument>
-                <argument>-DgroupId=${project.groupId}</argument>
-                <argument>-DartifactId=${project.artifactId}</argument>
-                <argument>-Dversion=${project.version}</argument>
-                <argument>-Dpackaging=dylib</argument>
-                <argument>-Dfile=${project.build.directory}/libAppleScriptEngine.dylib</argument>
-                <argument>-DgeneratePom=false</argument>
-                <argument>-DrepositoryId=github</argument>
-                <argument>-Durl=https://maven.pkg.github.com/umjammer/vavi-script-apple</argument>
-                <argument>-DgeneratePom=false</argument>
-                <argument>-s</argument>
-                <argument>${env.GITHUB_WORKSPACE}/settings.xml</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M7</version>
+        <version>3.2.2</version>
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
@@ -239,7 +241,7 @@
             -XstartOnFirstThread
           </argLine>
           <trimStackTrace>false</trimStackTrace>
-          <forkMode>always</forkMode>
+          <reuseForks>false</reuseForks>
         </configuration>
       </plugin>
     </plugins>
@@ -250,10 +252,6 @@
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/umjammer/*</url>
-    </repository>
   </repositories>
 
   <dependencyManagement>
@@ -261,7 +259,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.1</version>
+        <version>5.10.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -270,25 +268,32 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.rococoa</groupId>
+      <groupId>com.github.umjammer.rococoa</groupId> <!-- org.rococoa / com.github.umjammer.rococoa -->
       <artifactId>rococoa-cocoa</artifactId>
-      <version>${rococoa.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.rococoa</groupId>
-      <artifactId>rococoa-core</artifactId>
-      <version>${rococoa.version}</version>
+      <version>0.8.7</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.8</version>
+      <version>1.1.10</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-util-logging-asl</artifactId>
       <version>0.0.2</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>jna</artifactId>
+          <groupId>net.java.dev.jna</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scijava</groupId>
+      <artifactId>native-lib-loader</artifactId>
+      <version>2.5.0</version>
     </dependency>
 
     <dependency>
